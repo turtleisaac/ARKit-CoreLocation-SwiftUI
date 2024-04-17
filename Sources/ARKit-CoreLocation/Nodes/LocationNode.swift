@@ -9,19 +9,17 @@
 import Foundation
 import SceneKit
 import CoreLocation
+import SwiftUI
 
 /// This node type enables the client to have access to the view or image that
 /// was used to initialize the `LocationAnnotationNode`.
-open class AnnotationNode: SCNNode {
-    public var view: UIView?
-    public var image: UIImage?
-    public var layer: CALayer?
+@available(iOS 13.0, *)
+open class AnnotationNode<T : View>: SCNNode {
+    public var arHostingController: UIHostingController<T>?
 
-    public init(view: UIView?, image: UIImage?, layer: CALayer? = nil) {
+    public init(arHostingController: UIHostingController<T>?) {
         super.init()
-        self.view = view
-        self.image = image
-        self.layer = layer
+        self.arHostingController = arHostingController
     }
 
     required public init?(coder aDecoder: NSCoder) {

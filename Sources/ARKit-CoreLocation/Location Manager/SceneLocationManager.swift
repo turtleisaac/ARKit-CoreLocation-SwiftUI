@@ -22,7 +22,7 @@ public enum LocationEstimateMethod {
     case mostRelevantEstimate
 }
 
-protocol SceneLocationManagerDelegate: class {
+protocol SceneLocationManagerDelegate: AnyObject {
     var scenePosition: SCNVector3? { get }
 
     func confirmLocationOfDistantLocationNodes()
@@ -101,7 +101,7 @@ public final class SceneLocationManager {
         let currentPoint = CGPoint.pointWithVector(vector: currentScenePosition)
 
         sceneLocationEstimates = sceneLocationEstimates.filter {
-            if #available(iOS 11.0, *) {
+            if #available(iOS 13.0, *) {
                 let radiusContainsPoint = currentPoint.radiusContainsPoint(
                     radius: CGFloat(SceneLocationView.sceneLimit),
                     point: CGPoint.pointWithVector(vector: $0.position))

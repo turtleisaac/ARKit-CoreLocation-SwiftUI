@@ -8,62 +8,41 @@
 import Foundation
 import SceneKit
 import CoreLocation
+import SwiftUI
 
 /// A `LocationNode` which has an attached `AnnotationNode`.
-open class LocationAnnotationNode: LocationNode {
+@available(iOS 13.0, *)
+open class LocationAnnotationNode<T : View>: LocationNode {
     /// Subnodes and adjustments should be applied to this subnode
     /// Required to allow scaling at the same time as having a 2D 'billboard' appearance
-    public let annotationNode: AnnotationNode
+    public let annotationNode: AnnotationNode<T>
     /// Parameter to raise or lower the label's rendering position relative to the node's actual project location.
     /// The default value of 1.1 places the label at a pleasing height above the node.
     /// To draw the label exactly on the true location, use a value of 0. To draw it below the true location,
     /// use a negative value.
     public var annotationHeightAdjustmentFactor = 1.1
+    
+    public init(location: CLLocation?, arHost: UIHostingController<T>) {
+        let plane = SCNPlane(width: arHost.view.frame.width / 100, height: arHost.view.frame.height / 100)
+        
+        let material = SCNMaterial()
+        material.diffuse.contents = arHost.view
+        plane.materials = [material]
 
-    public init(location: CLLocation?, image: UIImage) {
-        let plane = SCNPlane(width: image.size.width / 100, height: image.size.height / 100)
-        plane.firstMaterial?.diffuse.contents = image
-        plane.firstMaterial?.lightingModel = .constant
-
-        annotationNode = AnnotationNode(view: nil, image: image)
+        annotationNode = AnnotationNode(arHostingController: arHost)
         annotationNode.geometry = plane
         annotationNode.removeFlicker()
+//        annotationNode.eulerAngles = -.pi / 2
 
         super.init(location: location)
 
         let billboardConstraint = SCNBillboardConstraint()
         billboardConstraint.freeAxes = SCNBillboardAxis.Y
         constraints = [billboardConstraint]
-
-        addChildNode(annotationNode)
-    }
-
-    @available(iOS 10.0, *)
-    /// Use this constructor to add a UIView as an annotation.  Keep in mind that it is not live, instead
-    /// it's a "snapshot" of that UIView.  UIView is more configurable then a UIImage, allowing you to add
-    /// background image, labels, etc.
-    ///
-    /// - Parameters:
-    ///   - location:The location of the node in the world.
-    ///   - view:The view to display at the specified location.
-    public convenience init(location: CLLocation?, view: UIView) {
-        self.init(location: location, image: view.image)
-    }
-
-    public init(location: CLLocation?, layer: CALayer) {
-        let plane = SCNPlane(width: layer.bounds.size.width / 100, height: layer.bounds.size.height / 100)
-        plane.firstMaterial?.diffuse.contents = layer
-        plane.firstMaterial?.lightingModel = .constant
-
-        annotationNode = AnnotationNode(view: nil, image: nil, layer: layer)
-        annotationNode.geometry = plane
-        annotationNode.removeFlicker()
-
-        super.init(location: location)
-
-        let billboardConstraint = SCNBillboardConstraint()
-        billboardConstraint.freeAxes = SCNBillboardAxis.Y
-        constraints = [billboardConstraint]
+        
+//        DispatchQueue.main.async {
+//            arHost.willMove(toParent: vc)
+//        }
 
         addChildNode(annotationNode)
     }

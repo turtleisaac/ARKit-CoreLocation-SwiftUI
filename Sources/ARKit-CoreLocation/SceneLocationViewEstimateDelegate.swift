@@ -10,20 +10,22 @@ import Foundation
 import ARKit
 import CoreLocation
 import MapKit
+import SwiftUI
 
 // Delegate for touch events on LocationNode
-public protocol LNTouchDelegate: class {
-    func annotationNodeTouched(node: AnnotationNode)
+@available(iOS 13.0, *)
+public protocol LNTouchDelegate: AnyObject {
+    func annotationNodeTouched(node: AnnotationNode<AnyView>)
     func locationNodeTouched(node: LocationNode)
 }
 
-@available(iOS 11.0, *)
-public protocol SceneLocationViewEstimateDelegate: class {
+@available(iOS 13.0, *)
+public protocol SceneLocationViewEstimateDelegate: AnyObject {
     func didAddSceneLocationEstimate(sceneLocationView: SceneLocationView, position: SCNVector3, location: CLLocation)
     func didRemoveSceneLocationEstimate(sceneLocationView: SceneLocationView, position: SCNVector3, location: CLLocation)
 }
 
-@available(iOS 11.0, *)
+@available(iOS 13.0, *)
 public extension SceneLocationViewEstimateDelegate {
     func didAddSceneLocationEstimate(sceneLocationView: SceneLocationView, position: SCNVector3, location: CLLocation) {
         //
@@ -33,8 +35,8 @@ public extension SceneLocationViewEstimateDelegate {
     }
 }
 
-@available(iOS 11.0, *)
-public protocol SceneLocationViewDelegate: class {
+@available(iOS 13.0, *)
+public protocol SceneLocationViewDelegate: AnyObject {
     ///After a node's location is initially set based on current location,
     ///it is later confirmed once the user moves far enough away from it.
     ///This update uses location data collected since the node was placed to give a more accurate location.
@@ -46,8 +48,8 @@ public protocol SceneLocationViewDelegate: class {
 }
 
 /// Subset of delegate methods from ARSCNViewDelegate to be notified on tracking status changes
-@available(iOS 11.0, *)
-public protocol SceneTrackingDelegate: class {
+@available(iOS 13.0, *)
+public protocol SceneTrackingDelegate: AnyObject {
 
     func sessionWasInterrupted(_ session: ARSession)
 
@@ -59,7 +61,7 @@ public protocol SceneTrackingDelegate: class {
 
 }
 
-@available(iOS 11.0, *)
+@available(iOS 13.0, *)
 public extension SceneLocationViewDelegate {
     func didAddSceneLocationEstimate(sceneLocationView: SceneLocationView, position: SCNVector3, location: CLLocation) {
         //
